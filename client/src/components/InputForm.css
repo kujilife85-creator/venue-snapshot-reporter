@@ -1,0 +1,29 @@
+.input-form-container {
+  background-color: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+}
+
+.input-form-container h2 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.input-helper {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.venue-textarea {
+  width: 100%;
+  resize: vertical;
+  margin-bottom: 1rem;
+  min-height: 120px;
+}
+
+.submit-btn {
+  width: 100%;
+}
