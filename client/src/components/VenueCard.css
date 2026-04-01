@@ -70,3 +70,9 @@
   color: var(--accent-hover);
   text-decoration: underline;
 }
+
+@media (max-width: 600px) {
+  .venue-image-container {
+    height: 180px;
+  }
+}

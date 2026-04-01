@@ -20,6 +20,7 @@ function App() {
 
     try {
       const lines = text.split('\n').filter(line => line.trim() !== '');
+      const seenUrls = new Set();
       const parsedVenues = lines.map((line, index) => {
         const parts = line.trim().split(/\s+/);
         let url = '';
@@ -34,7 +35,7 @@ function App() {
             parts.pop();
           }
         }
-        
+
         if (parts.length > 0) {
           price = parts[parts.length - 1];
           parts.pop();
@@ -42,6 +43,10 @@ function App() {
 
         location = parts.join(' ');
         return { id: index, location, price, url };
+      }).filter((venue) => {
+        if (venue.url && seenUrls.has(venue.url)) return false;
+        if (venue.url) seenUrls.add(venue.url);
+        return true;
       });
 
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -119,26 +124,6 @@ function App() {
     }
   }, [venues, rawInput]);
 
-  const handleShare = () => {
-    if (!rawInput.trim()) {
-      alert('공유할 데이터가 없습니다.');
-      return;
-    }
-    try {
-      // Create base64 encoded payload
-      const encoded = btoa(encodeURIComponent(rawInput));
-      const url = `${window.location.origin}${window.location.pathname}?data=${encoded}`;
-      
-      navigator.clipboard.writeText(url).then(() => {
-        alert('🎉 공유 링크가 클립보드에 복사되었습니다!\n동료에게 붙여넣기(Ctrl+V)해서 보내면 지금 화면의 카드들을 똑같이 볼 수 있습니다.');
-      }).catch(() => {
-        prompt('아래 링크를 복사(Ctrl+C)해서 동료에게 공유해주세요:', url);
-      });
-    } catch(e) {
-      alert('링크 생성 중 오류가 발생했습니다.');
-    }
-  };
-
   const filteredVenues = venues.filter(venue => {
     const query = searchQuery.toLowerCase();
     const locationMatch = venue.location && venue.location.toLowerCase().includes(query);
@@ -177,16 +162,8 @@ function App() {
         ) : (
           <>
             {(venues.length > 0 || searchQuery) && (
-              <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
-                <div style={{ flex: '1 1 200px' }}>
-                  <SearchBar query={searchQuery} setQuery={setSearchQuery} />
-                </div>
-                {venues.length > 0 && (
-                  <button onClick={handleShare} className="btn btn-primary" style={{ backgroundColor: '#4c6ef5', padding: '0.85rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', whiteSpace: 'nowrap' }}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-                    결과물 링크 공유하기
-                  </button>
-                )}
+              <div style={{ marginBottom: '1.5rem' }}>
+                <SearchBar query={searchQuery} setQuery={setSearchQuery} />
               </div>
             )}
             {venues.length > 0 && <VenueGrid venues={filteredVenues} />}

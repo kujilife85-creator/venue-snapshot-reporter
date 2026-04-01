@@ -4,6 +4,13 @@
   gap: 1.5rem;
 }
 
+@media (max-width: 600px) {
+  .venue-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
 .empty-state {
   text-align: center;
   padding: 3rem;
